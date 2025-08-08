@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ઘરખર્ચ ટ્રેકર - Home Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-wallet"></i>
+            <h1>ઘરખર્ચ ટ્રેકર</h1>
+        </div>
+        <div class="nav-controls">
+            <button id="theme-toggle" class="theme-btn">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>ડેશબોર્ડ</span>
+                </a>
+                <a href="#add-expense" class="nav-item" data-section="add-expense">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>ખર્ચ ઉમેરો</span>
+                </a>
+                <a href="#expense-list" class="nav-item" data-section="expense-list">
+                    <i class="fas fa-list"></i>
+                    <span>ખર્ચ યાદી</span>
+                </a>
+                <a href="#budget" class="nav-item" data-section="budget">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span>બજેટ</span>
+                </a>
+                <a href="#reports" class="nav-item" data-section="reports">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>રિપોર્ટ્સ</span>
+                </a>
+                <a href="#backup" class="nav-item" data-section="backup">
+                    <i class="fas fa-download"></i>
+                    <span>બેકઅપ</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <h2>ડેશબોર્ડ</h2>
+                
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>આજનો ખર્ચ</h3>
+                            <p id="today-expense">₹0</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>આ સપ્તાહનો ખર્ચ</h3>
+                            <p id="week-expense">₹0</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>આ મહિનાનો ખર્ચ</h3>
+                            <p id="month-expense">₹0</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>કુલ ખર્ચ</h3>
+                            <p id="total-expense">₹0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Warning -->
+                <div id="budget-warning" class="budget-warning hidden">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>ચેતવણી: તમારો ખર્ચ બજેટથી વધુ છે!</span>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>શ્રેણી મુજબ ખર્ચ</h3>
+                        <canvas id="category-chart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>માસિક ખર્ચ</h3>
+                        <canvas id="monthly-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Add Expense Section -->
+            <section id="add-expense" class="section">
+                <h2>ખર્ચ ઉમેરો</h2>
+                <div class="form-container">
+                    <form id="expense-form" class="expense-form">
+                        <div class="form-group">
+                            <label for="expense-date">તારીખ</label>
+                            <input type="date" id="expense-date" name="expense-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-category">શ્રેણી</label>
+                            <select id="expense-category" name="expense-category" required>
+                                <option value="">શ્રેણી પસંદ કરો</option>
+                                <option value="ખોરાક">ખોરાક</option>
+                                <option value="ભાડું">ભાડું</option>
+                                <option value="વીજળી">વીજળી</option>
+                                <option value="પાણી">પાણી</option>
+                                <option value="ખરીદી">ખરીદી</option>
+                                <option value="પ્રવાસ">પ્રવાસ</option>
+                                <option value="અન્ય">અન્ય</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-amount">રકમ (₹)</label>
+                            <input type="number" id="expense-amount" name="expense-amount" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-description">વર્ણન</label>
+                            <textarea id="expense-description" name="expense-description" rows="3" placeholder="ખર્ચનું વર્ણન લખો..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                ખર્ચ ઉમેરો
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                <i class="fas fa-undo"></i>
+                                રીસેટ કરો
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Expense List Section -->
+            <section id="expense-list" class="section">
+                <h2>ખર્ચ યાદી</h2>
+                
+                <!-- Filters -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="search-expense">શોધો</label>
+                        <input type="text" id="search-expense" placeholder="વર્ણન દ્વારા શોધો...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="category-filter">શ્રેણી ફિલ્ટર</label>
+                        <select id="category-filter">
+                            <option value="">બધી શ્રેણી</option>
+                            <option value="ખોરાક">ખોરાક</option>
+                            <option value="ભાડું">ભાડું</option>
+                            <option value="વીજળી">વીજળી</option>
+                            <option value="પાણી">પાણી</option>
+                            <option value="ખરીદી">ખરીદી</option>
+                            <option value="પ્રવાસ">પ્રવાસ</option>
+                            <option value="અન્ય">અન્ય</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="date-filter">તારીખ ફિલ્ટર</label>
+                        <input type="date" id="date-filter">
+                    </div>
+                    <div class="filter-actions">
+                        <button id="export-csv" class="btn btn-success">
+                            <i class="fas fa-download"></i>
+                            CSV ડાઉનલોડ કરો
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Expense Table -->
+                <div class="table-container">
+                    <table id="expense-table" class="expense-table">
+                        <thead>
+                            <tr>
+                                <th>તારીખ</th>
+                                <th>શ્રેણી</th>
+                                <th>રકમ</th>
+                                <th>વર્ણન</th>
+                                <th>ક્રિયાઓ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expense-tbody">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Budget Section -->
+            <section id="budget" class="section">
+                <h2>બજેટ મેનેજમેન્ટ</h2>
+                <div class="budget-container">
+                    <div class="budget-form">
+                        <h3>માસિક બજેટ સેટ કરો</h3>
+                        <form id="budget-form">
+                            <div class="form-group">
+                                <label for="monthly-budget">માસિક બજેટ (₹)</label>
+                                <input type="number" id="monthly-budget" name="monthly-budget" min="0" step="0.01" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                બજેટ સેવ કરો
+                            </button>
+                        </form>
+                    </div>
+                    <div class="budget-info">
+                        <div class="budget-card">
+                            <h4>વર્તમાન બજેટ</h4>
+                            <p id="current-budget">₹0</p>
+                        </div>
+                        <div class="budget-card">
+                            <h4>બાકી બજેટ</h4>
+                            <p id="remaining-budget">₹0</p>
+                        </div>
+                        <div class="budget-card">
+                            <h4>બજેટ ઉપયોગ</h4>
+                            <div class="progress-bar">
+                                <div id="budget-progress" class="progress-fill"></div>
+                            </div>
+                            <span id="budget-percentage">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="section">
+                <h2>રિપોર્ટ્સ</h2>
+                <div class="reports-container">
+                    <div class="report-card">
+                        <h3>શ્રેણી મુજબ સારાંશ</h3>
+                        <div id="category-summary" class="summary-list">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                    <div class="report-card">
+                        <h3>માસિક તુલના</h3>
+                        <div id="monthly-comparison" class="comparison-list">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Backup Section -->
+            <section id="backup" class="section">
+                <h2>ડેટા બેકઅપ અને રિસ્ટોર</h2>
+                <div class="backup-container">
+                    <div class="backup-card">
+                        <h3>ડેટા એક્સપોર્ટ કરો</h3>
+                        <p>તમારો બધો ડેટા JSON ફાઇલ તરીકે ડાઉનલોડ કરો</p>
+                        <button id="export-data" class="btn btn-primary">
+                            <i class="fas fa-download"></i> ડેટા એક્સપોર્ટ કરો
+                        </button>
+                    </div>
+                    
+                    <div class="backup-card">
+                        <h3>ડેટા ઇમ્પોર્ટ કરો</h3>
+                        <p>JSON ફાઇલથી ડેટા ઇમ્પોર્ટ કરો</p>
+                        <input type="file" id="import-file" accept=".json" style="display: none;">
+                        <button id="import-data" class="btn btn-secondary">
+                            <i class="fas fa-upload"></i> ફાઇલ પસંદ કરો
+                        </button>
+                    </div>
+                    
+                    <div class="backup-card">
+                        <h3>બેકઅપ રિસ્ટોર કરો</h3>
+                        <p>સ્વયંચાલિત બેકઅપથી ડેટા પુનઃસ્થાપિત કરો</p>
+                        <button id="restore-backup" class="btn btn-warning">
+                            <i class="fas fa-undo"></i> બેકઅપ રિસ્ટોર કરો
+                        </button>
+                    </div>
+                    
+                    <div class="backup-card">
+                        <h3>ડેટા સાફ કરો</h3>
+                        <p>બધો ડેટા કાઢી નાખો (સાવધાન!)</p>
+                        <button id="clear-data" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> બધો ડેટા કાઢી નાખો
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="backup-info">
+                    <h3>ડેટા સુરક્ષા માહિતી</h3>
+                    <ul>
+                        <li>✅ ડેટા localStorage અને sessionStorage માં સેવ થાય છે</li>
+                        <li>✅ IndexedDB માં પણ બેકઅપ સેવ થાય છે</li>
+                        <li>✅ સ્વયંચાલિત JSON બેકઅપ બનાવાય છે</li>
+                        <li>✅ તમે મેન્યુઅલ બેકઅપ ડાઉનલોડ કરી શકો છો</li>
+                        <li>⚠️ બ્રાઉઝર કેશ ક્લિયર કરવાથી ડેટા જઈ શકે છે</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Edit Expense Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>ખર્ચ સંપાદિત કરો</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="edit-expense-form">
+                <div class="form-group">
+                    <label for="edit-date">તારીખ</label>
+                    <input type="date" id="edit-date" name="edit-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-category">શ્રેણી</label>
+                    <select id="edit-category" name="edit-category" required>
+                        <option value="ખોરાક">ખોરાક</option>
+                        <option value="ભાડું">ભાડું</option>
+                        <option value="વીજળી">વીજળી</option>
+                        <option value="પાણી">પાણી</option>
+                        <option value="ખરીદી">ખરીદી</option>
+                        <option value="પ્રવાસ">પ્રવાસ</option>
+                        <option value="અન્ય">અન્ય</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-amount">રકમ (₹)</label>
+                    <input type="number" id="edit-amount" name="edit-amount" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-description">વર્ણન</label>
+                    <textarea id="edit-description" name="edit-description" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">સેવ કરો</button>
+                    <button type="button" class="btn btn-secondary modal-close">રદ કરો</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+

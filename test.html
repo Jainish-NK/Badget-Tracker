@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ખર્ચ ટ્રેકર ટેસ્ટ - Expense Tracker Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #059669;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+        }
+        .error {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+        .success {
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+        }
+    </style>
+</head>
+<body>
+    <h1>ખર્ચ ટ્રેકર ટેસ્ટ - Expense Tracker Test</h1>
+    
+    <div class="test-section">
+        <h2>ટેસ્ટ 1: ડેટા લોડ કરવા (Test 1: Load Data)</h2>
+        <button class="test-button" onclick="testLoadData()">ડેટા લોડ કરો</button>
+        <div id="load-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>ટેસ્ટ 2: ખર્ચ ઉમેરવા (Test 2: Add Expense)</h2>
+        <button class="test-button" onclick="testAddExpense()">ખર્ચ ઉમેરો</button>
+        <div id="add-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>ટેસ્ટ 3: બજેટ સેટ કરવા (Test 3: Set Budget)</h2>
+        <button class="test-button" onclick="testSetBudget()">બજેટ સેટ કરો</button>
+        <div id="budget-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>ટેસ્ટ 4: કુલ ખર્ચ ચેક કરવા (Test 4: Check Total)</h2>
+        <button class="test-button" onclick="testCheckTotal()">કુલ ખર્ચ ચેક કરો</button>
+        <div id="total-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>ટેસ્ટ 5: મેઇન એપ્લિકેશન ખોલવા (Test 5: Open Main App)</h2>
+        <button class="test-button" onclick="openMainApp()">મેઇન એપ્લિકેશન ખોલો</button>
+    </div>
+
+    <script>
+        function testLoadData() {
+            const result = document.getElementById('load-result');
+            try {
+                const expenses = localStorage.getItem('expenses');
+                const budget = localStorage.getItem('budget');
+                
+                if (expenses) {
+                    const parsedExpenses = JSON.parse(expenses);
+                    result.innerHTML = `
+                        <div class="success">
+                            ✅ ડેટા સફળતાપૂર્વક લોડ થયો!<br>
+                            ખર્ચની સંખ્યા: ${parsedExpenses.length}<br>
+                            બજેટ: ₹${budget || '0'}
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <div class="error">
+                            ⚠️ કોઈ ડેટા મળ્યો નથી. કૃપા કરીને પહેલા ખર્ચ ઉમેરો.
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="error">
+                        ❌ ડેટા લોડ કરવામાં ભૂલ: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function testAddExpense() {
+            const result = document.getElementById('add-result');
+            try {
+                const testExpense = {
+                    id: Date.now(),
+                    date: new Date().toISOString().split('T')[0],
+                    category: 'ખોરાક',
+                    amount: 500,
+                    description: 'ટેસ્ટ ખર્ચ'
+                };
+
+                let expenses = [];
+                const savedExpenses = localStorage.getItem('expenses');
+                if (savedExpenses) {
+                    expenses = JSON.parse(savedExpenses);
+                }
+
+                expenses.push(testExpense);
+                localStorage.setItem('expenses', JSON.stringify(expenses));
+
+                result.innerHTML = `
+                    <div class="success">
+                        ✅ ખર્ચ સફળતાપૂર્વક ઉમેરાયો!<br>
+                        રકમ: ₹${testExpense.amount}<br>
+                        શ્રેણી: ${testExpense.category}<br>
+                        કુલ ખર્ચ: ${expenses.length}
+                    </div>
+                `;
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="error">
+                        ❌ ખર્ચ ઉમેરવામાં ભૂલ: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function testSetBudget() {
+            const result = document.getElementById('budget-result');
+            try {
+                const testBudget = 10000;
+                localStorage.setItem('budget', testBudget.toString());
+
+                result.innerHTML = `
+                    <div class="success">
+                        ✅ બજેટ સફળતાપૂર્વક સેટ થયો!<br>
+                        બજેટ: ₹${testBudget}
+                    </div>
+                `;
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="error">
+                        ❌ બજેટ સેટ કરવામાં ભૂલ: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function testCheckTotal() {
+            const result = document.getElementById('total-result');
+            try {
+                const savedExpenses = localStorage.getItem('expenses');
+                if (savedExpenses) {
+                    const expenses = JSON.parse(savedExpenses);
+                    const total = expenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
+                    
+                    result.innerHTML = `
+                        <div class="success">
+                            ✅ કુલ ખર્ચ ચેક કર્યો!<br>
+                            કુલ ખર્ચ: ₹${total.toFixed(2)}<br>
+                            ખર્ચની સંખ્યા: ${expenses.length}
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <div class="error">
+                            ⚠️ કોઈ ખર્ચ નથી
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="error">
+                        ❌ કુલ ખર્ચ ચેક કરવામાં ભૂલ: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function openMainApp() {
+            window.open('index.html', '_blank');
+        }
+
+        // Auto-run first test
+        window.onload = function() {
+            testLoadData();
+        };
+    </script>
+</body>
+</html> 
